@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define SIZE1 80
-#define SIZE2 25
 
-void init_board(int board[80][25]);
+#define SIZE1 25
+#define SIZE2 80
+
+void init_board(int board[SIZE1][SIZE2]);
 void print_board(int board[SIZE1][SIZE2]);
 void update_board(int board[SIZE1][SIZE2]);
 int count_neighbors(int board[SIZE1][SIZE2], int x, int y);
@@ -15,22 +16,32 @@ int main() {
     int board[SIZE1][SIZE2];
     init_board(board);
     while(1) {
-        system("clear");
+        
         print_board(board);
         update_board(board);
-        sleep (1);
+        usleep (700000);
        
     }
     return 0;
 }
 
 
-void init_board(int board[80][25]) {
-    for(int i=0; i<80; i++) {
-        for(int j=0; j<25; j++) {
-            board[i][j] = rand() % 2;
+void init_board(int board[SIZE1][SIZE2]) 
+{
+    FILE *file = NULL;
+    if(! (file = fopen("txt1.txt","r")))
+    {
+       printf("open %s failed\n", "txt"); exit(1);
+    }
+
+    for(int i=0; i<SIZE1; i++) {
+        for(int j=0; j<SIZE2; j++) {
+            
+            board[i][j] = fgetc(file);
+           
         }
     }
+    fclose(file);
 }
 
 
@@ -41,9 +52,9 @@ void print_board(int board[SIZE1][SIZE2]) {
     for(int i=0; i<SIZE1; i++) {
         for(int j=0; j<SIZE2; j++) {
             if(board[i][j] == 1)
-                printf("* ");
+                printf("🐭");
             else
-                printf(". ");
+                printf("..");
         }
         printf("\n");
     }
