@@ -6,12 +6,14 @@
 #define SIZE1 25
 #define SIZE2 80
 
+//--Объявление функций-------------------------------------
 void init_board(int board[SIZE1][SIZE2]);
 void print_board(int board[SIZE1][SIZE2]);
 void update_board(int board[SIZE1][SIZE2]);
 int count_neighbors(int board[SIZE1][SIZE2], int x, int y);
 int speed();
 
+//----------------------------------------------------------
 int main() {
     int v = speed();
     if (v !=0) {
@@ -29,7 +31,7 @@ int main() {
     return 0;
 }
 
-
+//--Инициализация через файл---------------------------------
 void init_board(int board[SIZE1][SIZE2]) 
 {
     FILE *file = NULL;
@@ -48,10 +50,7 @@ void init_board(int board[SIZE1][SIZE2])
     fclose(file);
 }
 
-
-
-
-
+//--Отрисовка данных массива---------------------------------
 void print_board(int board[SIZE1][SIZE2]) {
     system("clear");
     for(int i=0; i<SIZE1; i++) {
@@ -65,7 +64,7 @@ void print_board(int board[SIZE1][SIZE2]) {
     }
 }
 
-
+//--Обновление данных массива и проверка---------------------- 
 void update_board(int board[SIZE1][SIZE2]) {
  int tmp[SIZE1][SIZE2];
     for(int i=0; i<SIZE1; i++) {
@@ -123,6 +122,7 @@ void update_board(int board[SIZE1][SIZE2]) {
     }
 }
 
+//--Подсчёт соседей-------------------------------------------
 int count_neighbors(int board[SIZE1][SIZE2], int x, int y) {
       int count = 0;
     for(int i=-1; i<=1; i++) {
@@ -137,6 +137,7 @@ int count_neighbors(int board[SIZE1][SIZE2], int x, int y) {
     return count;
 }
 
+//--Регулировка скорости--------------------------------------
 int speed() {
 int v=1;
 if (scanf("%d", &v)==1 && v>0)
