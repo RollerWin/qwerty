@@ -37,7 +37,7 @@ void init_board(int board[SIZE1][SIZE2])
     for(int i=0; i<SIZE1; i++) {
         for(int j=0; j<SIZE2; j++) {
             
-            board[i][j] = fgetc(file);
+            board[i][j] = fgetc(file)-48;
            
         }
     }
@@ -49,12 +49,14 @@ void init_board(int board[SIZE1][SIZE2])
 
 
 void print_board(int board[SIZE1][SIZE2]) {
+    for (int p=0;p<40;p++)
+        printf("\n");
     for(int i=0; i<SIZE1; i++) {
         for(int j=0; j<SIZE2; j++) {
             if(board[i][j] == 1)
-                printf("🐭");
+                printf("*");
             else
-                printf("..");
+                printf(".");
         }
         printf("\n");
     }
@@ -131,3 +133,6 @@ int count_neighbors(int board[SIZE1][SIZE2], int x, int y) {
     }
     return count;
 }
+
+
+
