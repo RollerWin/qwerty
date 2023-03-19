@@ -4,6 +4,7 @@
 
 #define VERTICAL_LENGTH 25
 #define HORIZONTAL_LENGTH 80
+#define FINAL_GENERATION 100
 
 //--Объявление функций-------------------------------------
 void init_field(int **field);
@@ -16,6 +17,8 @@ int count_neighbors(int **field, int x, int y);
 // void update_field(int field[][HORIZONTAL_LENGTH]);
 // int count_neighbors(int field[][HORIZONTAL_LENGTH], int x, int y);
 int speed();
+//int is_equal_function(int **previous_field, int **field);
+int is_alive_function(int **field);
 
 //----------------------------------------------------------
 int main() {
@@ -23,13 +26,17 @@ int main() {
     if (v != 0) {
         int **field = malloc(VERTICAL_LENGTH * sizeof(int *));
         for (int i = 0; i < VERTICAL_LENGTH; i++) field[i] = malloc(HORIZONTAL_LENGTH * sizeof(int));
-
+        
         // int field[VERTICAL_LENGTH][HORIZONTAL_LENGTH];
         init_field(field);
-        while (1) {
+        int current_generation = 1;
+        int is_alive = 1;
+        while (is_alive && current_generation != FINAL_GENERATION) {
             print_field(field);
             update_field(field);
             usleep(v);
+            current_generation++;
+            is_alive = is_alive_function(field);
         }
 
         for (int i = 0; i < VERTICAL_LENGTH; i++) free(field[i]);
@@ -46,7 +53,7 @@ void init_field(int **field) {
     for (int i = 0; i < VERTICAL_LENGTH; i++) {
         for (int j = 0; j < HORIZONTAL_LENGTH; j++) {
             int initt;
-            //char init;
+            // char init;
             scanf("%d", &initt);
             field[i][j] = initt;
         }
@@ -110,6 +117,9 @@ void update_field(int **field) {
                 update_array[i][j] = field[i][j];
         }
     }
+
+    //*is_alive = is_alive_function(field, update_array);
+
     for (int i = 0; i < VERTICAL_LENGTH; i++) {
         for (int j = 0; j < HORIZONTAL_LENGTH; j++) {
             field[i][j] = update_array[i][j];
@@ -177,4 +187,24 @@ int speed() {
     else
         v = 0;
     return v;
+}
+
+// int is_equal_function(int **previous_field, int **field) {
+//     int correct = 1;
+//     for(int i = 0; i < VERTICAL_LENGTH; i++) {
+//         for(int j = 0; j < HORIZONTAL_LENGTH; j++) {
+//             if(previous_field[i][j] != field[i][j]) correct = 0;
+//         }
+//     }
+//     return correct;
+// }
+
+int is_alive_function(int **field) {
+    int correct = 0;
+    for(int i = 0; i < VERTICAL_LENGTH && !correct; i++) {
+        for(int j = 0; j < HORIZONTAL_LENGTH && !correct; j++) {
+            if(field[i][j] == 1) correct = 1;
+        }
+    }
+    return correct;
 }
