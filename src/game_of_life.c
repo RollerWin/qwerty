@@ -12,7 +12,7 @@ void update_field(int **field);
 int count_neighbors(int **field, int x, int y);
 
 int speed();
-
+int is_equal_function(int **previous_field, int **field);
 int is_alive_function(int **field);
 
 int main(int argc, char **argv) {
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
         printf("n/a");
         return 0;
     }
-    int v = 0;
+    int v;
     if (argv[1][0] == '1') {
         v = 1;
     } else if (argv[1][0] == '2') {
@@ -38,8 +38,8 @@ int main(int argc, char **argv) {
 
         init_field(field);
         int is_alive = 1;
-
-        while (is_alive) {
+        int is_equal = 0;
+        while (is_alive && !is_equal) {
             print_field(field);
             update_field(field);
             usleep(v);
@@ -115,6 +115,16 @@ int count_neighbors(int **field, int x, int y) {
         }
     }
     return count;
+}
+
+int is_equal_function(int **previous_field, int **field) {
+    int correct = 1;
+    for (int i = 0; i < VERTICAL_LENGTH; i++) {
+        for (int j = 0; j < HORIZONTAL_LENGTH; j++) {
+            if (previous_field[i][j] != field[i][j]) correct = 0;
+        }
+    }
+    return correct;
 }
 
 int is_alive_function(int **field) {
