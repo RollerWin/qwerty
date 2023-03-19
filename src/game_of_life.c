@@ -1,3 +1,4 @@
+#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5,52 +6,47 @@
 #define VERTICAL_LENGTH 25
 #define HORIZONTAL_LENGTH 80
 #define FINAL_GENERATION 10000
+#define DELAY 200000
 
 void init_field(int **field);
 void print_field(int **field);
 void update_field(int **field);
 int count_neighbors(int **field, int x, int y);
-
-int speed();
-int is_equal_function(int **previous_field, int **field);
 int is_alive_function(int **field);
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        printf("n/a");
-        return 0;
+int main() {
+    int v = 30000;
+    initscr();
+    nodelay(stdscr, true);
+    noecho();
+    int **field = malloc(VERTICAL_LENGTH * sizeof(int *));
+    for (int i = 0; i < VERTICAL_LENGTH; i++) field[i] = malloc(HORIZONTAL_LENGTH * sizeof(int));
+
+    init_field(field);
+    FILE *f = freopen("/dev/tty", "r", stdin);
+    if (f == NULL) {
     }
-    int v;
-    if (argv[1][0] == '1') {
-        v = 1;
-    } else if (argv[1][0] == '2') {
-        v = 2;
-    } else if (argv[1][0] == '3') {
-        v = 3;
-    } else if (argv[1][0] == '4') {
-        v = 4;
+    int is_alive = 1;
+    int play = 1;
+    while (is_alive && play) {
+        usleep(v);
+        char speed = getch();
+        if (speed == '+' && v > 5000)
+            v -= 5000;
+        else if (speed == '-' && v < 150000)
+            v += 5000;
+        else if (speed == 'q')
+            play = 0;
+        clear();
+        print_field(field);
+        update_field(field);
+        is_alive = is_alive_function(field);
+        refresh();
     }
-    v = 200000 / v;
 
-    if (v != 0) {
-        int **field = malloc(VERTICAL_LENGTH * sizeof(int *));
-        for (int i = 0; i < VERTICAL_LENGTH; i++) field[i] = malloc(HORIZONTAL_LENGTH * sizeof(int));
-
-        init_field(field);
-        int is_alive = 1;
-        int is_equal = 0;
-        while (is_alive && !is_equal) {
-            print_field(field);
-            update_field(field);
-            usleep(v);
-            is_alive = is_alive_function(field);
-        }
-
-        for (int i = 0; i < VERTICAL_LENGTH; i++) free(field[i]);
-        free(field);
-
-    } else
-        printf("n/a");
+    for (int i = 0; i < VERTICAL_LENGTH; i++) free(field[i]);
+    free(field);
+    endwin();
     return 0;
 }
 
@@ -65,14 +61,17 @@ void init_field(int **field) {
 }
 
 void print_field(int **field) {
-    system("clear");
     for (int i = 0; i < VERTICAL_LENGTH; i++) {
-        for (int j = 0; j < HORIZONTAL_LENGTH; j++) {
+        for (int j = 0; j < HORIZONTAL_LENGTH - 1; j++) {
             if (field[i][j] == 1)
-                printf("*");
+                addch('*');
             else
-                printf(".");
+                addch('.');
         }
+        if (field[i][HORIZONTAL_LENGTH - 1] == 1)
+            addstr("*\n");
+        else
+            addstr(".\n");
         printf("\n");
     }
 }
@@ -115,16 +114,6 @@ int count_neighbors(int **field, int x, int y) {
         }
     }
     return count;
-}
-
-int is_equal_function(int **previous_field, int **field) {
-    int correct = 1;
-    for (int i = 0; i < VERTICAL_LENGTH; i++) {
-        for (int j = 0; j < HORIZONTAL_LENGTH; j++) {
-            if (previous_field[i][j] != field[i][j]) correct = 0;
-        }
-    }
-    return correct;
 }
 
 int is_alive_function(int **field) {
