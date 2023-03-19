@@ -3,21 +3,21 @@
 #include <unistd.h>
 
 
-#define SIZE1 25
-#define SIZE2 80
+#define VERTICAL_LENGTH 25
+#define HORIZONTAL_LENGTH 81
 
 //--Объявление функций-------------------------------------
-void init_field(int field[][SIZE2]);
-void print_field(int field[][SIZE2]);
-void update_field(int field[][SIZE2]);
-int count_neighbors(int field[][SIZE2], int x, int y);
+void init_field(int field[][HORIZONTAL_LENGTH]);
+void print_field(int field[][HORIZONTAL_LENGTH]);
+void update_field(int field[][HORIZONTAL_LENGTH]);
+int count_neighbors(int field[][HORIZONTAL_LENGTH], int x, int y);
 int speed();
 
 //----------------------------------------------------------
 int main() {
     int v = speed();
     if (v !=0) {
-    int field[SIZE1][SIZE2];
+    int field[VERTICAL_LENGTH][HORIZONTAL_LENGTH];
     init_field(field);
     while(1) {
         
@@ -32,7 +32,7 @@ int main() {
 }
 
 //--Инициализация через файл---------------------------------
-void init_field(int field[][SIZE2]) 
+void init_field(int field[][HORIZONTAL_LENGTH]) 
 {
     FILE *file = NULL;
     if(! (file = fopen("txt1.txt","r")))
@@ -40,8 +40,8 @@ void init_field(int field[][SIZE2])
        printf("open %s failed\n", "txt"); exit(1);
     }
 
-    for(int i=0; i<SIZE1; i++) {
-        for(int j=0; j<SIZE2; j++) {
+    for(int i=0; i<VERTICAL_LENGTH; i++) {
+        for(int j=0; j<HORIZONTAL_LENGTH; j++) {
             
             field[i][j] = fgetc(file)-48;
            
@@ -51,10 +51,10 @@ void init_field(int field[][SIZE2])
 }
 
 //--Отрисовка данных массива---------------------------------
-void print_field(int field[][SIZE2]) {
+void print_field(int field[][HORIZONTAL_LENGTH]) {
     system("clear");
-    for(int i=0; i<SIZE1; i++) {
-        for(int j=0; j<SIZE2; j++) {
+    for(int i=0; i<VERTICAL_LENGTH; i++) {
+        for(int j=0; j<HORIZONTAL_LENGTH; j++) {
             if(field[i][j] == 1)
                 printf("*");
             else
@@ -65,73 +65,73 @@ void print_field(int field[][SIZE2]) {
 }
 
 //--Обновление данных массива и проверка---------------------- 
-void update_field(int field[][SIZE2]) {
- int tmp[SIZE1][SIZE2];
+void update_field(int field[][HORIZONTAL_LENGTH]) {
+ int update_array[VERTICAL_LENGTH][HORIZONTAL_LENGTH];
     //Определяем, выживет ли клетка?
-    for(int i=0; i<SIZE1; i++) {
-        for(int j=0; j<SIZE2; j++) {
+    for(int i=0; i<VERTICAL_LENGTH; i++) {
+        for(int j=0; j<HORIZONTAL_LENGTH; j++) {
             int neighbors = count_neighbors(field, i, j);
             if(field[i][j] == 1 && (neighbors < 2 || neighbors > 3))
-                tmp[i][j] = 0;
+                update_array[i][j] = 0;
             else if(field[i][j] == 0 && neighbors == 3)
-                tmp[i][j] = 1;
+                update_array[i][j] = 1;
             else
-                tmp[i][j] = field[i][j];
+                update_array[i][j] = field[i][j];
         }
     }
-    for(int i=0; i<SIZE1; i++) {
-        for(int j=0; j<SIZE2; j++) {
-            field[i][j] = tmp[i][j];
+    for(int i=0; i<VERTICAL_LENGTH; i++) {
+        for(int j=0; j<HORIZONTAL_LENGTH; j++) {
+            field[i][j] = update_array[i][j];
         }
     }
    
-    for(int i=0; i<SIZE1; i++) {
-        int top_neigh = field[(i-1+SIZE1)%SIZE1][SIZE2-1];
-        int bot_neigh = field[(i+1)%SIZE1][SIZE2-1];
-        if(field[i][SIZE2-1] == 1 && top_neigh+bot_neigh < 2)
-            tmp[i][SIZE2-1] = 0;
-        else if(field[i][SIZE2-1] == 0 && top_neigh+bot_neigh == 3)
-            tmp[i][SIZE2-1] = 1;
+    // for(int i=0; i<VERTICAL_LENGTH; i++) {
+    //     int top_neigh = field[(i-1+VERTICAL_LENGTH)%VERTICAL_LENGTH][HORIZONTAL_LENGTH-1];
+    //     int bot_neigh = field[(i+1)%VERTICAL_LENGTH][HORIZONTAL_LENGTH-1];
+    //     if(field[i][HORIZONTAL_LENGTH-1] == 1 && top_neigh+bot_neigh < 2)
+    //         update_array[i][HORIZONTAL_LENGTH-1] = 0;
+    //     else if(field[i][HORIZONTAL_LENGTH-1] == 0 && top_neigh+bot_neigh == 3)
+    //         update_array[i][HORIZONTAL_LENGTH-1] = 1;
         
-        top_neigh = field[(i-1+SIZE1)%SIZE1][0];
-        bot_neigh = field[(i+1)%SIZE1][0];
-        if(field[i][0] == 1 && top_neigh+bot_neigh < 2)
-            tmp[i][0] = 0;
-        else if(field[i][0] == 0 && top_neigh+bot_neigh == 3)
-            tmp[i][0] = 1;
-    }
-    for(int j=0; j<SIZE2; j++) {
-        int left_neigh = field[SIZE1-1][(j-1+SIZE2)%SIZE2];
-        int right_neigh = field[SIZE1-1][(j+1)%SIZE2];
-        if(field[SIZE1-1][j] == 1 && left_neigh+right_neigh < 2)
-            tmp[SIZE1-1][j] = 0;
-        else if(field[SIZE1-1][j] == 0 && left_neigh+right_neigh == 3)
-            tmp[SIZE1-1][j] = 1;
+    //     top_neigh = field[(i-1+VERTICAL_LENGTH)%VERTICAL_LENGTH][0];
+    //     bot_neigh = field[(i+1)%VERTICAL_LENGTH][0];
+    //     if(field[i][0] == 1 && top_neigh+bot_neigh < 2)
+    //         update_array[i][0] = 0;
+    //     else if(field[i][0] == 0 && top_neigh+bot_neigh == 3)
+    //         update_array[i][0] = 1;
+    // }
+    // for(int j=0; j<HORIZONTAL_LENGTH; j++) {
+    //     int left_neigh = field[VERTICAL_LENGTH-1][(j-1+HORIZONTAL_LENGTH)%HORIZONTAL_LENGTH];
+    //     int right_neigh = field[VERTICAL_LENGTH-1][(j+1)%HORIZONTAL_LENGTH];
+    //     if(field[VERTICAL_LENGTH-1][j] == 1 && left_neigh+right_neigh < 2)
+    //         update_array[VERTICAL_LENGTH-1][j] = 0;
+    //     else if(field[VERTICAL_LENGTH-1][j] == 0 && left_neigh+right_neigh == 3)
+    //         update_array[VERTICAL_LENGTH-1][j] = 1;
         
-        left_neigh = field[0][(j-1+SIZE2)%SIZE2];
-        right_neigh = field[0][(j+1)%SIZE2];
-        if(field[0][j] == 1 && left_neigh+right_neigh < 2)
-            tmp[0][j] = 0;
-        else if(field[0][j] == 0 && left_neigh+right_neigh == 3)
-            tmp[0][j] = 1;
-    }
+    //     left_neigh = field[0][(j-1+HORIZONTAL_LENGTH)%HORIZONTAL_LENGTH];
+    //     right_neigh = field[0][(j+1)%HORIZONTAL_LENGTH];
+    //     if(field[0][j] == 1 && left_neigh+right_neigh < 2)
+    //         update_array[0][j] = 0;
+    //     else if(field[0][j] == 0 && left_neigh+right_neigh == 3)
+    //         update_array[0][j] = 1;
+    // }
    
-    for(int i=0; i<SIZE1; i++) {
-        for(int j=0; j<SIZE2; j++) {
-            field[i][j] = tmp[i][j];
-        }
-    }
+    // for(int i=0; i<VERTICAL_LENGTH; i++) {
+    //     for(int j=0; j<HORIZONTAL_LENGTH; j++) {
+    //         field[i][j] = update_array[i][j];
+    //     }
+    // }
 }
 
 //--Подсчёт соседей-------------------------------------------
-int count_neighbors(int field[][SIZE2], int x, int y) {
+int count_neighbors(int field[][HORIZONTAL_LENGTH], int x, int y) {
       int count = 0;
     for(int i=-1; i<=1; i++) {
         for(int j=-1; j<=1; j++) {
             if(i == 0 && j == 0)
                 continue;
-            int row = (x + i + SIZE1) % SIZE1;
-            int col = (y + j + SIZE2) % SIZE2;
+            int row = (x + i + VERTICAL_LENGTH) % VERTICAL_LENGTH;
+            int col = (y + j + HORIZONTAL_LENGTH) % HORIZONTAL_LENGTH;
             count += field[row][col];
         }
     }
