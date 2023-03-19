@@ -45,9 +45,10 @@ int main() {
 void init_field(int **field) {
     for (int i = 0; i < VERTICAL_LENGTH; i++) {
         for (int j = 0; j < HORIZONTAL_LENGTH; j++) {
-            int init;
-            scanf("%d", &init);
-            field[i][j] = init;
+            int initt;
+            //char init;
+            scanf("%d", &initt);
+            field[i][j] = initt;
         }
     }
 }
